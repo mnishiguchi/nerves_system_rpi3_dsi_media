@@ -80,3 +80,55 @@ BR2_PACKAGE_NERVES_CONFIG_ACCEPT_RNG_NOTICE=y
 BR2_PACKAGE_RPICAM_APPS=y
 BR2_PACKAGE_RPI_DISTRO_FIRMWARE_NONFREE=y
 BR2_PACKAGE_RPI_LIBCAMERA_V4L2=y
+
+# FFmpeg for RTSP camera display and MP4 playback (hello_scenic_rtsp)
+# - FFMPEG_FFMPEG: ffmpeg CLI (RtspSource / Mp4Source)
+# - FFMPEG_FFPROBE: ffprobe (RecordingLibrary.duration/1)
+# - FFMPEG_SWSCALE: -vf scale filter used in all pipelines
+# encoders/decoders/protocols default to "all" — keep that to avoid the rabbit
+# hole of "which exact codec name does each camera need". Image size grows by
+# ~25-40 MB but Pi3 SD card has plenty of room.
+BR2_PACKAGE_FFMPEG=y
+BR2_PACKAGE_FFMPEG_FFMPEG=y
+BR2_PACKAGE_FFMPEG_FFPROBE=y
+BR2_PACKAGE_FFMPEG_SWSCALE=y
+
+# GStreamer stack for RTSP playback and DRM/KMS output experiments.
+# Pipeline: rtspsrc → rtph264depay → h264parse → v4l2h264dec → videoconvert → kmssink
+# Tools (gst-launch-1.0 / gst-inspect-1.0) are required for on-device pipeline testing.
+BR2_PACKAGE_GSTREAMER1=y
+BR2_PACKAGE_GSTREAMER1_INSTALL_TOOLS=y
+BR2_PACKAGE_GSTREAMER1_PARSE=y
+BR2_PACKAGE_GSTREAMER1_PLUGIN_REGISTRY=y
+BR2_PACKAGE_GST1_PLUGINS_BASE=y
+BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_APP=y
+BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERTSCALE=y
+BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_PLAYBACK=y
+BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_TYPEFIND=y
+BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_COMPOSITOR=y
+BR2_PACKAGE_GST1_PLUGINS_GOOD=y
+BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_RTSP=y
+BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_RTP=y
+BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_RTPMANAGER=y
+BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_UDP=y
+BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_V4L2=y
+# V4L2_PROBE: probe /dev/video* at plugin load time to discover M2M codec
+# devices. Without this, v4l2h264dec / v4l2h265dec etc. don't appear in
+# gst-inspect even when the kernel exposes /dev/video10 (the Pi3 H.264 M2M
+# decoder). Required for the GStreamer + DRM overlay plane PoC.
+BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_V4L2_PROBE=y
+BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_ISOMP4=y
+BR2_PACKAGE_GST1_PLUGINS_BAD=y
+BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_KMS=y
+BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VIDEOPARSERS=y
+
+# gst-libav: SW H.264 decoder (avdec_h264) used as Phase 3.5 workaround for
+# Pi3 bcm2835_codec's right-edge crop. v4l2h264dec drops ~10% of the right
+# columns in the decoded buffer (camera OSD clock seconds become invisible).
+# avdec_h264 has no such bug. Pi3 CPU cost for 1080p H.264 SW decode is
+# ~25-40% per stream — fine for SINGLE; QUAD stays on the FFmpeg + cairo
+# path which is already SW.
+BR2_PACKAGE_GST1_LIBAV=y
+
+# DRM plane diagnostics (modetest, drm_info) for Phase 0 inspection.
+BR2_PACKAGE_LIBDRM_INSTALL_TESTS=y
