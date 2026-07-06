@@ -4,6 +4,8 @@
 
 この文書は、`nerves_system_rpi3` をもとにした独自 Nerves システムの主なカスタマイズ内容をまとめる。
 
+この fork は、[kurokouji](https://github.com/kurokouji) 氏および [piyopiyo.ex](https://github.com/piyopiyoex) メンバーによって作成・検証されたものである。
+
 目的は、Raspberry Pi 3 で DSI 接続の表示装置を使い、Scenic による画面表示、RTSP カメラ映像表示、MP4 再生、DRM/KMS 検証を行えるようにすることである。
 
 ## 基本方針
