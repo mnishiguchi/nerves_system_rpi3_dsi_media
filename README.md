@@ -1,3 +1,15 @@
+この repository は、`nerves_system_rpi3` をもとに、Raspberry Pi 3 で DSI 表示装置や映像まわりを扱いやすくするために調整した Nerves システムです。
+
+DSI 表示装置の利用、Scenic による画面描画、RTSP カメラ映像の表示、MP4 再生、DRM/KMS の検証に必要な変更を加えています。
+
+主な変更点は、次の文書にまとめています。
+
+- [Raspberry Pi 3 向け DSI 表示対応 Nerves システムのカスタマイズ概要](https://github.com/piyopiyoex/nerves_system_rpi3_dsi_media/blob/main/docs/nerves-system-customization-details.md)
+
+対応するOTPバージョンについては[公式ドキュメント](https://nerves.hexdocs.pm/systems.html#compatibility) を参照。
+
+以下は、もとの `nerves_system_rpi3` の README です。
+
 # Raspberry Pi 3 Model B / B+
 
 [![Hex version](https://img.shields.io/hexpm/v/nerves_system_rpi3.svg "Hex version")](https://hex.pm/packages/nerves_system_rpi3)
@@ -6,30 +18,30 @@
 
 This is the base Nerves System configuration for the Raspberry Pi 3 Model B.
 
-*This is the `main` branch. If you are customizing a `v1.x` system, please see
+_This is the `main` branch. If you are customizing a `v1.x` system, please see
 the `maint-v1.x` branch. See the "Upgrading to 2.0" section if you are upgrading
-your Nerves system dependency.*
+your Nerves system dependency._
 
 ![Fritzing Raspberry Pi 3 image](assets/images/raspberry-pi-3-model-b.png)
 <br><sup>[Image credit](#fritzing)</sup>
 
-| Feature              | Description                                                 |
-| -------------------- | ----------------------------------------------------------- |
-| CPU                  | 1.2 GHz quad-core Cortex-A53 (ARMv8)                        |
-| Memory               | 1 GB DRAM                                                   |
-| Storage              | MicroSD                                                     |
-| Linux kernel         | 6.18 w/ Raspberry Pi patches                                |
-| IEx terminal         | HDMI and USB keyboard (can be changed to UART)              |
-| GPIO, I2C, SPI       | Yes - [Elixir Circuits](https://github.com/elixir-circuits) |
-| ADC                  | No                                                          |
-| PWM                  | Yes, but no Elixir support                                  |
-| UART                 | 1 available - `ttyAMA0`                                     |
-| Display              | HDMI or 7" RPi Touchscreen                                  |
-| Camera               | Yes - via rpi-userland                                      |
-| Ethernet             | Yes                                                         |
-| WiFi                 | Yes                                                         |
-| Bluetooth            | [See Bluetooth](#bluetooth)                                 |
-| Audio                | HDMI/Stereo out                                             |
+| Feature        | Description                                                 |
+| -------------- | ----------------------------------------------------------- |
+| CPU            | 1.2 GHz quad-core Cortex-A53 (ARMv8)                        |
+| Memory         | 1 GB DRAM                                                   |
+| Storage        | MicroSD                                                     |
+| Linux kernel   | 6.18 w/ Raspberry Pi patches                                |
+| IEx terminal   | HDMI and USB keyboard (can be changed to UART)              |
+| GPIO, I2C, SPI | Yes - [Elixir Circuits](https://github.com/elixir-circuits) |
+| ADC            | No                                                          |
+| PWM            | Yes, but no Elixir support                                  |
+| UART           | 1 available - `ttyAMA0`                                     |
+| Display        | HDMI or 7" RPi Touchscreen                                  |
+| Camera         | Yes - via rpi-userland                                      |
+| Ethernet       | Yes                                                         |
+| WiFi           | Yes                                                         |
+| Bluetooth      | [See Bluetooth](#bluetooth)                                 |
+| Audio          | HDMI/Stereo out                                             |
 
 ## Using
 
@@ -115,7 +127,7 @@ make the following change to the Linux configuration:
 ```text
 -CONFIG_PREEMPT=y
 +CONFIG_PREEMPT_RT_FULL=y
- ```
+```
 
 Build the system and you should now have a preempt_rt kernel.
 
@@ -131,9 +143,9 @@ function.
 
 Keys used by this system are:
 
-Key                    | Example Value     | Description
-:--------------------- | :---------------- | :----------
-`nerves_serial_number` | `"12345678"`      | By default, this string is used to create unique hostnames and Erlang node names. If unset, it defaults to part of the Raspberry Pi's device ID.
+| Key                    | Example Value | Description                                                                                                                                      |
+| :--------------------- | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nerves_serial_number` | `"12345678"`  | By default, this string is used to create unique hostnames and Erlang node names. If unset, it defaults to part of the Raspberry Pi's device ID. |
 
 The normal procedure would be to set these keys once in manufacturing or before
 deployment and then leave them alone.
@@ -233,7 +245,7 @@ configuration found here, do the following (this is somewhat tedious):
 1. In `Device Drivers -> Character devices -> Serial drivers`, disable 8250 and
    SC16IS7xx support. Disable the RAW driver.
 1. In `Networking support->Network options`, disable `IP: kernel level
-   autoconfiguration`
+autoconfiguration`
 1. In `Networking support->Network options->TCP: advanced congestion control`
    disable everything except for `CUBIC TCP`.
 1. Disable `Real Time Clock`.
